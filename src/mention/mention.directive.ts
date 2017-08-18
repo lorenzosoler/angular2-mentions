@@ -118,7 +118,10 @@ export class MentionDirective {
   keyHandler(event: any, nativeElement: HTMLInputElement = this._element.nativeElement) {
     let val: string = getValue(nativeElement);
     let pos = getCaretPosition(nativeElement, this.iframe);
-    let charPressed = event.key;
+    let charPressed;
+    if (event.target) {
+      charPressed = event.target.value.charAt(nativeElement.selectionStart - 1);
+    }
     if (!charPressed) {
       let charCode = event.which || event.keyCode;
       if (!event.shiftKey && (charCode >= 65 && charCode <= 90)) {
@@ -171,7 +174,7 @@ export class MentionDirective {
             // value is inserted without a trailing space for consistency
             // between element types (div and iframe do not preserve the space)
             insertValue(nativeElement, this.startPos, pos,
-              this.mentionSelect(this.triggerChar + this.searchList.activeItem), this.iframe);
+              this.mentionSelect(this.searchList.activeItem), this.iframe);
             // fire input event so angular bindings are updated
             if ("createEvent" in document) {
               var evt = document.createEvent("HTMLEvents");

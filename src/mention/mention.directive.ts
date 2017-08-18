@@ -25,7 +25,7 @@ const KEY_2 = 50;
 @Directive({
   selector: '[mention]',
   host: {
-    '(keydown)': 'keyHandler($event)',
+    '(keyup)': 'keyHandler($event)',
     '(blur)': 'blurHandler($event)'
   }
 })
@@ -120,7 +120,7 @@ export class MentionDirective {
     let pos = getCaretPosition(nativeElement, this.iframe);
     let charPressed;
     if (event.target) {
-      charPressed = event.target.value.charAt(nativeElement.selectionStart - 1);
+      charPressed = event.target.value.charAt(nativeElement.selectionStart - 1);//event.key 
     }
     if (!charPressed) {
       let charCode = event.which || event.keyCode;
@@ -207,10 +207,7 @@ export class MentionDirective {
           return false;
         }
         else {
-          let mention = val.substring(this.startPos + 1, pos);
-          if (event.keyCode !== KEY_BACKSPACE) {
-            mention += charPressed;
-          }
+          let mention = val.substring(this.startPos, pos);
           this.searchString = mention;
           this.searchTerm.emit(this.searchString);
           this.updateSearchList();
@@ -253,6 +250,7 @@ export class MentionDirective {
       });
     }
     else {
+      this.searchList.items = this.items;
       this.searchList.activeIndex = 0;
       this.searchList.position(nativeElement, this.iframe);
       window.setTimeout(() => this.searchList.resetScroll());
